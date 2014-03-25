@@ -3,7 +3,10 @@ var http = require('http'),
     fs = require('fs'),
     mkdirp = require('mkdirp');
 
-console.log('Listening...');
+
+var PORT = 8081;
+
+console.log('Listening on port', PORT, '...');
 
 ///////////////////////////////////////
 // parseUri 1.2.2
@@ -83,4 +86,4 @@ http.createServer(function(request, response) {
   request.addListener('end', function() {
     proxy_request.end();
   });
-}).listen(8081);
+}).listen(PORT);

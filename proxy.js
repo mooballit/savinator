@@ -1,7 +1,8 @@
 
 var http = require('http'),
     fs = require('fs'),
-    mkdirp = require('mkdirp');
+    mkdirp = require('mkdirp'),
+    zlib = require('zlib');
 
 
 var PORT = 8081;
@@ -66,7 +67,21 @@ http.createServer(function(request, response) {
 
     var writeStream = fs.createWriteStream(file_path);
 
-    proxy_response.pipe(writeStream);
+    switch (proxy_response.headers['content-encoding']) {
+        // or, just use zlib.createUnzip() to handle both cases
+        case 'gzip':
+          proxy_response.pipe(zlib.createGunzip()).pipe(writeStream);
+          break;
+        case 'deflate':
+          proxy_response.pipe(zlib.createInflate()).pipe(writeStream);
+          break;
+        default:
+          proxy_response.pipe(writeStream);
+          break;
+    }
+
+
+    // proxy_response.pipe(writeStream);
 
 
 
